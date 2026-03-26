@@ -1,0 +1,459 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.w { padding: 1.5rem 1rem; font-family: var(--font-sans, system-ui); color: var(--color-text-primary); max-width: 760px; margin: 0 auto; }
+
+.tabs { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+.tab { font-size: 12px; padding: 5px 12px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all 0.12s; }
+.tab.active { border-color: #185FA5; background: #E6F1FB; color: #0C447C; font-weight: 500; }
+@media (prefers-color-scheme: dark) { .tab.active { background: #0C447C; color: #B5D4F4; border-color: #185FA5; } }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.prog-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+.prog-badge { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; font-weight: 500; }
+.badge-blue { background: #E6F1FB; color: #0C447C; border: 0.5px solid #85B7EB; }
+.badge-teal { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.badge-amber { background: #FAEEDA; color: #633806; border: 0.5px solid #EF9F27; }
+@media (prefers-color-scheme: dark) {
+  .badge-blue { background: #0C447C; color: #B5D4F4; }
+  .badge-teal { background: #085041; color: #9FE1CB; }
+  .badge-amber { background: #633806; color: #FAC775; }
+}
+.prog-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.prog-sub { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; line-height: 1.4; }
+
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+.slabel { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-secondary); margin-bottom: 5px; }
+.sec { margin-bottom: 12px; }
+.sec:last-child { margin-bottom: 0; }
+
+.mrow { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+.mrow:last-child { border-bottom: none; }
+.micon { flex-shrink: 0; width: 20px; font-size: 12px; color: var(--color-text-secondary); padding-top: 1px; }
+.mtext { color: var(--color-text-primary); line-height: 1.4; }
+.msub { color: var(--color-text-secondary); font-size: 12px; margin-top: 1px; line-height: 1.4; }
+
+.level-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.level-card { background: var(--color-background-secondary); border-radius: 8px; padding: 10px 12px; }
+.level-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.level-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.level-req { font-size: 11px; color: var(--color-text-secondary); margin-top: 4px; padding-top: 4px; border-top: 0.5px solid var(--color-border-tertiary); }
+
+.verdict { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; margin-top: 10px; }
+.verdict-good { background: #E1F5EE; border: 0.5px solid #5DCAA5; }
+.verdict-warn { background: #FAEEDA; border: 0.5px solid #EF9F27; }
+.verdict-no { background: #FAECE7; border: 0.5px solid #F0997B; }
+@media (prefers-color-scheme: dark) {
+  .verdict-good { background: #085041; border-color: #0F6E56; }
+  .verdict-warn { background: #633806; border-color: #854F0B; }
+  .verdict-no { background: #712B13; border-color: #D85A30; }
+}
+.verdict-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.verdict-text { font-size: 12px; line-height: 1.5; color: var(--color-text-primary); }
+.verdict-text strong { font-weight: 500; }
+
+.compare-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+.cg-head { background: var(--color-background-secondary); border-radius: 8px 8px 0 0; padding: 8px 12px; font-size: 12px; font-weight: 500; color: var(--color-text-primary); text-align: center; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.cg-body { background: var(--color-background-secondary); border-radius: 0 0 8px 8px; padding: 8px 12px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; text-align: center; }
+.cg-card { background: var(--color-background-secondary); border-radius: 8px; overflow: hidden; border: 0.5px solid var(--color-border-tertiary); }
+
+.tl { display: grid; grid-template-columns: 106px 1fr; gap: 0; }
+.tl-y { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); padding: 10px 0 0; }
+.tl-c { border-left: 1.5px solid var(--color-border-secondary); padding: 8px 0 8px 16px; margin-left: 8px; }
+.tl-t { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 3px; }
+.tl-s { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.prog-pill { display: inline-block; font-size: 10px; padding: 1px 7px; border-radius: 8px; margin: 1px 2px; vertical-align: middle; }
+.pp-blue { background: #E6F1FB; color: #0C447C; border: 0.5px solid #85B7EB; }
+.pp-teal { background: #E1F5EE; color: #085041; border: 0.5px solid #5DCAA5; }
+.pp-amber { background: #FAEEDA; color: #633806; border: 0.5px solid #EF9F27; }
+.pp-gray { background: var(--color-background-secondary); color: var(--color-text-secondary); border: 0.5px solid var(--color-border-secondary); }
+@media (prefers-color-scheme: dark) {
+  .pp-blue { background: #0C447C; color: #B5D4F4; }
+  .pp-teal { background: #085041; color: #9FE1CB; }
+  .pp-amber { background: #633806; color: #FAC775; }
+}
+
+.insight { padding: 10px 14px; border-radius: 0 8px 8px 0; border-left: 2px solid #378ADD; background: var(--color-background-secondary); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 10px; }
+.insight strong { color: var(--color-text-primary); font-weight: 500; }
+.warn-box { padding: 10px 14px; border-radius: 0 8px 8px 0; border-left: 2px solid #D85A30; background: var(--color-background-secondary); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 10px; }
+.warn-box strong { color: var(--color-text-primary); font-weight: 500; }
+
+.cost-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+.cost-row:last-child { border-bottom: none; }
+.cost-label { color: var(--color-text-primary); }
+.cost-val { color: var(--color-text-secondary); font-size: 12px; }
+.cost-free { color: #085041; font-size: 12px; font-weight: 500; }
+@media (prefers-color-scheme: dark) { .cost-free { color: #9FE1CB; } }
+
+.nbtn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); cursor: pointer; }
+.nbtn:hover { background: var(--color-background-secondary); }
+.nav { display: flex; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+</style>
+
+<div class="w">
+<div class="tabs">
+  <button class="tab active" onclick="show('woot')">MathWOOT</button>
+  <button class="tab" onclick="show('otis')">OTIS</button>
+  <button class="tab" onclick="show('am')">AwesomeMath</button>
+  <button class="tab" onclick="show('compare')">Side-by-side</button>
+  <button class="tab" onclick="show('integrate')">Integration into roadmap</button>
+</div>
+
+<!-- MATHWOOT -->
+<div class="panel active" id="p-woot">
+  <div class="card">
+    <div class="prog-header">
+      <div class="prog-badge badge-blue">W</div>
+      <div>
+        <div class="prog-title">MathWOOT (AoPS)</div>
+        <div class="prog-sub">Math Worldwide Online Olympiad Training · year-round · Sept–March · $895/year</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">The two levels — very different entry points</div>
+      <div class="level-grid">
+        <div class="level-card">
+          <div class="level-title">Level 1</div>
+          <div class="level-body">Bridge from AIME to olympiad proof-writing. Covers all four olympiad subjects. Builds proof-writing fluency and contest-specific skills to qualify for USAJMO/USAMO.</div>
+          <div class="level-req">Prerequisite: AIME score 5–9 + all AoPS Intro & Intermediate courses done. 22 classes, Sept–March.</div>
+        </div>
+        <div class="level-card">
+          <div class="level-title">Level 2</div>
+          <div class="level-body">For olympiad qualifiers targeting best performance at USAMO/IMO. Alternates content between two versions — can be taken two consecutive years without repeating material.</div>
+          <div class="level-req">Prerequisite: MathWOOT L1 completed OR AIME score 9+. Same schedule and cost.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">What makes it distinctive</div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Curriculum by Alex Song (5-time IMO Gold), David Patrick (USAMO winner), Naoki Sato — the most decorated pedigree of any online olympiad program</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">76 IMO medals since 2015 — 58 gold, 15 silver, 3 bronze — the strongest track record of any program</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Direct solution feedback from instructors — not just answer checking</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">MOP participants get it free — a direct signal of its alignment with the US olympiad pipeline</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">3 practice AIME exams (L1) + 3 USA(J)MO / IMO practices (L2) — real contest simulation built in</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Honest limitations</div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Hard prerequisite gate: AIME 5–9 for Level 1. No point trying to enter early — the material assumes that ability level</div><div class="msub">For your son: not applicable until he has his first AIME score. If he scores 5+ in Feb 2028 (grade 7), he can enter MathWOOT L1 in September 2028 (grade 8).</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Year-round commitment (Sept–March) — requires consistent weekly engagement alongside school</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Cost & logistics (2026)</div>
+      <div class="cost-row"><span class="cost-label">Tuition</span><span class="cost-val">$895 early bird (ends Aug 18) · $945 regular</span></div>
+      <div class="cost-row"><span class="cost-label">Schedule</span><span class="cost-val">3 session options/week (Tue, Fri, Sun evenings ET)</span></div>
+      <div class="cost-row"><span class="cost-label">Duration</span><span class="cost-val">Sept 8, 2026 – March 14, 2027 · 22 classes</span></div>
+      <div class="cost-row"><span class="cost-label">MOP participants</span><span class="cost-free">Free</span></div>
+      <div class="cost-row"><span class="cost-label">Registration deadline</span><span class="cost-val">Sept 22, 2026</span></div>
+    </div>
+
+    <div class="verdict verdict-good">
+      <span class="verdict-icon">✓</span>
+      <div class="verdict-text"><strong>Verdict for your son:</strong> MathWOOT Level 1 is the single most important structured program on this roadmap — but he isn't ready yet. The right entry point is September 2028 (grade 8), immediately after his first AIME if he scores 5+. It should be treated as non-negotiable at that stage.</div>
+    </div>
+  </div>
+</div>
+
+<!-- OTIS -->
+<div class="panel" id="p-otis">
+  <div class="card">
+    <div class="prog-header">
+      <div class="prog-badge badge-teal">O</div>
+      <div>
+        <div class="prog-title">OTIS (Olympiad Training for Individual Study)</div>
+        <div class="prog-sub">Evan Chen · proof-based · year-round · need-blind financial aid · no age restriction</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Three difficulty tracks</div>
+      <div class="level-grid">
+        <div class="level-card">
+          <div class="level-title">B-level (beginner)</div>
+          <div class="level-body">Entry-level olympiad proof work. Covers standard topics with beginner-friendly problems. Designed for students just crossing into proof-based work from AIME-level material.</div>
+        </div>
+        <div class="level-card">
+          <div class="level-title">D-level (intermediate)</div>
+          <div class="level-body">Mid-range olympiad material. For students who can read proofs fluently and are targeting USAJMO qualification or first USAMO qualification.</div>
+        </div>
+      </div>
+      <div style="margin-top:8px">
+        <div class="level-card" style="background:var(--color-background-secondary);border-radius:8px;padding:10px 12px;">
+          <div class="level-title">Z-level (hardest)</div>
+          <div class="level-body" style="font-size:12px;color:var(--color-text-secondary);">Hardest track. For MOP-level students targeting IMO. Evan Chen's highest-difficulty handouts — the material used to train future IMO team members.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">What makes OTIS different from MathWOOT</div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Run entirely by Evan Chen — the most respected name in US olympiad training. His EGMO, OTIS Excerpts, and handouts are the canonical self-study resources.</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">No age restriction, no grade requirement — admission is purely about mathematical readiness and proof ability</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Need-blind, full financial aid available — explicitly accessible regardless of income</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Individual, self-paced handout model — very different from MathWOOT's structured class format. More like a curated problem curriculum with mentor feedback.</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Admission is not merit-based competition — it's about proof readiness and English ability. Much more accessible than programs with hard score cutoffs.</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">OTIS vs MathWOOT — the key distinction</div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">MathWOOT = structured class with live instruction, homework, exams, and direct instructor feedback on a fixed schedule</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">OTIS = curated problem sets and handouts with periodic feedback; more flexible pacing; Evan Chen personally reviews applications and direction</div><div class="msub">Many top students do both simultaneously — MathWOOT for structured instruction, OTIS for deep problem practice.</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Application & cost</div>
+      <div class="cost-row"><span class="cost-label">Application</span><span class="cost-val">apply.evanchen.cc · late apps until end of April each year</span></div>
+      <div class="cost-row"><span class="cost-label">Financial aid</span><span class="cost-free">Full aid available · need-blind</span></div>
+      <div class="cost-row"><span class="cost-label">Entry gate</span><span class="cost-val">Proof readiness + English ability · not score-gated</span></div>
+      <div class="cost-row"><span class="cost-label">Free preview</span><span class="cost-free">OTIS Excerpts — 202 problems/solutions, publicly free</span></div>
+    </div>
+
+    <div class="verdict verdict-good">
+      <span class="verdict-icon">✓</span>
+      <div class="verdict-text"><strong>Verdict for your son:</strong> OTIS is the right program to begin earlier than MathWOOT — potentially grade 7 (B-level), after USAMTS gives him proof-writing feedback. It's the bridge between AIME-level problem solving and actual olympiad work. The OTIS Excerpts (free) are the right way to preview the material and assess readiness before applying.</div>
+    </div>
+  </div>
+</div>
+
+<!-- AWESOMEMATH -->
+<div class="panel" id="p-am">
+  <div class="card">
+    <div class="prog-header">
+      <div class="prog-badge badge-amber">A</div>
+      <div>
+        <div class="prog-title">AwesomeMath Summer Program</div>
+        <div class="prog-sub">3-week online intensive · ages 12–18 · June–August · $1,275–$1,575/session · 4 levels</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Program structure</div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Three 3-week sessions: June 8–26, June 29–July 17, July 20–Aug 7 (2026)</div><div class="msub">Can take 1, 2, or all 3 sessions. Advised: max 2 courses per session. Different courses each session.</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Daily format: 90-minute lecture + 60-minute problem session, Mon–Fri</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Courses in Algebra, Geometry, Combinatorics, Number Theory — each at four levels</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Homework assigned and graded daily · two Saturday assessment tests per session</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">The four levels — mapped to competition stage</div>
+      <div class="level-grid">
+        <div class="level-card">
+          <div class="level-title">Level 1</div>
+          <div class="level-body">AMC 10/12 midrange → AIME with 1–3 correct. Entry point for strong AMC students approaching AIME.</div>
+        </div>
+        <div class="level-card">
+          <div class="level-title">Level 2</div>
+          <div class="level-body">AIME with 4–11 correct. The main development zone for most serious AIME competitors.</div>
+        </div>
+        <div class="level-card" style="margin-top:8px">
+          <div class="level-title">Level 3</div>
+          <div class="level-body">AIME with 12+ correct → Olympiad level. Pre-USAMO territory.</div>
+        </div>
+        <div class="level-card" style="margin-top:8px">
+          <div class="level-title">Level 4</div>
+          <div class="level-body">Full olympiad. USAMO/IMO territory. USA(J)MO qualifiers auto-admitted.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Distinctive features</div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Featured on MIT's "Preparing for MIT" page — strong signal of college recognition</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Subject-specific courses — can take Geometry at Level 2 and Combinatorics at Level 3 simultaneously, for example. Very flexible level mixing by subject.</div></div></div>
+      <div class="mrow"><span class="micon">★</span><div><div class="mtext">Intense daily engagement (2.5 hrs/day, 5 days/week) — more immersive than year-round programs</div></div></div>
+      <div class="mrow"><span class="micon">→</span><div><div class="mtext">Age restriction: 12–18. Does not apply to your son in summer 2026 (he'll be ~10–11 finishing 5th grade).</div></div></div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Cost & admission (2026)</div>
+      <div class="cost-row"><span class="cost-label">Tuition per session</span><span class="cost-val">$1,275–$1,575 (depends on application timing)</span></div>
+      <div class="cost-row"><span class="cost-label">USA(J)MO qualifiers</span><span class="cost-free">Auto-admitted · no test required</span></div>
+      <div class="cost-row"><span class="cost-label">New students</span><span class="cost-val">Application + admission test + recommendation letter</span></div>
+      <div class="cost-row"><span class="cost-label">Academy (year-round)</span><span class="cost-val">$595 per 12-week course · ages 5th–12th grade</span></div>
+    </div>
+
+    <div class="warn-box"><strong>Age gate for summer 2026:</strong> AwesomeMath Summer runs ages 12–18. Your son will be approximately 10–11 finishing 5th grade in July 2026 — below the minimum age. The first realistic summer is 2027, when he'll likely be 11–12 (borderline) or 2028 (grade 7–8, solidly within range). The Academy year-round courses start at 5th grade and have no age minimum — a good earlier option.</div>
+
+    <div class="verdict verdict-warn">
+      <span class="verdict-icon">→</span>
+      <div class="verdict-text"><strong>Verdict for your son:</strong> Not yet (age gate). AwesomeMath Summer becomes appropriate from grade 7–8 (2027–2029), targeting Level 1–2 in summer 2027 and Level 2–3 in summer 2028 onwards. The Academy's year-round courses (5th grade +) are accessible now as an optional supplement.</div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPARE -->
+<div class="panel" id="p-compare">
+  <div class="card">
+    <div class="sec">
+      <div class="slabel">Side-by-side comparison</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;font-size:12px;border-collapse:collapse;min-width:500px;">
+          <tr style="border-bottom:0.5px solid var(--color-border-secondary);">
+            <th style="text-align:left;padding:6px 8px 6px 0;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--color-text-secondary);font-weight:500;width:26%">Dimension</th>
+            <th style="text-align:left;padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#0C447C;font-weight:500;width:25%">MathWOOT</th>
+            <th style="text-align:left;padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#085041;font-weight:500;width:25%">OTIS</th>
+            <th style="text-align:left;padding:6px 8px;font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:#633806;font-weight:500;width:24%">AwesomeMath</th>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Format</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Live class, fixed schedule, Sept–March</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Handouts + feedback, flexible pacing</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Intensive 3-week online camp, summer only</td>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Entry gate</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">AIME 5–9 (hard cutoff)</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Proof readiness (soft gate)</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Admission test (level-based)</td>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Age / grade</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">No restriction (AIME gate is effective filter)</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">No restriction at all</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">12–18 (summer) · 5th+ (academy)</td>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Focus</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">USAMO/IMO proof-writing & strategy</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Deep olympiad problem solving at any level</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">AMC→AIME→Olympiad by subject</td>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Cost</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">$895–$945/year</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Full aid available</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">$1,275–$1,575/session</td>
+          </tr>
+          <tr style="border-bottom:0.5px solid var(--color-border-tertiary);">
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">IMO track record</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">76 medals since 2015 (best documented)</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Many alums on USAMO / MOP</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Strong AIME/USAMO results</td>
+          </tr>
+          <tr>
+            <td style="padding:7px 8px 7px 0;color:var(--color-text-secondary);font-weight:500;">Best used for</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Structured AIME→USAMO→IMO progression</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Deep problem practice, proof fluency</td>
+            <td style="padding:7px 8px;color:var(--color-text-primary);">Subject-specific intensive development</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="insight"><strong>Do they conflict?</strong> No — these programs are designed to layer. Many top US olympiad students use all three simultaneously: AwesomeMath in summer for subject-specific depth, OTIS through the year for self-paced problem practice, and MathWOOT for structured proof-writing instruction with a cohort.</div>
+  </div>
+</div>
+
+<!-- INTEGRATION -->
+<div class="panel" id="p-integrate">
+  <div class="card">
+    <div class="slabel" style="margin-bottom:12px">Integration into your son's roadmap — year by year</div>
+    <div class="tl">
+      <div class="tl-y">Now–Jul '26<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 5</span></div>
+      <div class="tl-c">
+        <div class="tl-t">No structured programs yet — curriculum only</div>
+        <div class="tl-s">
+          <span class="prog-pill pp-gray">OTIS Excerpts (free)</span> — read lightly to preview olympiad flavor.<br>
+          MathWOOT, OTIS, and AwesomeMath all require more mathematical maturity. Focus 100% on finishing Int. Algebra and building the pacing habit.
+        </div>
+      </div>
+
+      <div class="tl-y">Summer '26<br><span style="font-size:10px;color:var(--color-text-secondary)">Before Gr 6</span></div>
+      <div class="tl-c">
+        <div class="tl-t">Still not yet — but consider AwesomeMath Academy</div>
+        <div class="tl-s">
+          He'll be ~10–11, below AwesomeMath Summer's age floor (12+). But the <span class="prog-pill pp-amber">AwesomeMath Academy</span> year-round program starts at 5th grade ($595/12-week course). Optional supplement if you want structured problem-solving alongside Precalculus + ICP self-study. Not essential — the AoPS books are sufficient.
+        </div>
+      </div>
+
+      <div class="tl-y">Fall '26–<br>Spring '27<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 6</span></div>
+      <div class="tl-c">
+        <div class="tl-t">USAMTS — the proof-writing prerequisite for OTIS</div>
+        <div class="tl-s">
+          <span class="prog-pill pp-gray">USAMTS</span> (free, proof-based, month-long rounds, written feedback) is the right structured program this year. It builds the proof-writing ability needed to apply for OTIS. Complete at least Rounds 1–2. This is more important than starting OTIS too early.
+        </div>
+      </div>
+
+      <div class="tl-y">Summer '27<br><span style="font-size:10px;color:var(--color-text-secondary)">Before Gr 7</span></div>
+      <div class="tl-c">
+        <div class="tl-t">AwesomeMath Summer — first realistic attempt</div>
+        <div class="tl-s">
+          He'll be ~11–12 (borderline age). If 12 by June 2027: apply for <span class="prog-pill pp-amber">AwesomeMath Level 1</span> in Algebra + Combinatorics. These directly reinforce ICP and Number Theory work. If still 11, wait for Summer 2028 when age won't be a question.
+        </div>
+      </div>
+
+      <div class="tl-y">Fall '27<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 7</span></div>
+      <div class="tl-c">
+        <div class="tl-t">Apply to OTIS — B-level track</div>
+        <div class="tl-s">
+          After USAMTS experience, he should have enough proof fluency to apply for <span class="prog-pill pp-teal">OTIS B-level</span>. Apply in spring 2027 for the 2027–28 year. This is the ideal entry point — it runs year-round alongside his Number Theory and Calculus curriculum, filling the gap before MathWOOT becomes available.
+        </div>
+      </div>
+
+      <div class="tl-y">Feb '28<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 7</span></div>
+      <div class="tl-c">
+        <div class="tl-t">First AIME — unlocks MathWOOT entry</div>
+        <div class="tl-s">If he scores 5+ on AIME (target 5–8), he meets the MathWOOT Level 1 prerequisite. This is the key gate.</div>
+      </div>
+
+      <div class="tl-y">Summer '28<br><span style="font-size:10px;color:var(--color-text-secondary)">Before Gr 8</span></div>
+      <div class="tl-c">
+        <div class="tl-t">AwesomeMath Level 2 — solidly in range</div>
+        <div class="tl-s">
+          He'll be 12–13. <span class="prog-pill pp-amber">AwesomeMath Level 2</span> (AIME 4–11) across Geometry and Number Theory. Can mix levels by subject: e.g., Level 2 Geometry + Level 3 Combinatorics if his ICP work is strong.
+        </div>
+      </div>
+
+      <div class="tl-y">Fall '28<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 8</span></div>
+      <div class="tl-c">
+        <div class="tl-t">MathWOOT Level 1 — the core olympiad program begins</div>
+        <div class="tl-s">
+          <span class="prog-pill pp-blue">MathWOOT Level 1</span> starts September 2028. Runs alongside Group Theory + Linear Algebra curriculum and USAJMO preparation. This is the most important structured enrollment on the roadmap. Continue <span class="prog-pill pp-teal">OTIS D-level</span> in parallel — they are complementary, not competing.
+        </div>
+      </div>
+
+      <div class="tl-y">Summer '29<br><span style="font-size:10px;color:var(--color-text-secondary)">Before Gr 9</span></div>
+      <div class="tl-c">
+        <div class="tl-t">AwesomeMath Level 3 + summer programs (PROMYS / Ross)</div>
+        <div class="tl-s">
+          <span class="prog-pill pp-amber">AwesomeMath Level 3</span> (AIME 12+ / Olympiad) alongside a residential program (PROMYS or Ross). These can coexist if sessions don't conflict — AwesomeMath is online and flexible.
+        </div>
+      </div>
+
+      <div class="tl-y">Fall '29<br><span style="font-size:10px;color:var(--color-text-secondary)">Grade 9</span></div>
+      <div class="tl-c">
+        <div class="tl-t">MathWOOT Level 2 + OTIS Z-level + MOP (if qualified)</div>
+        <div class="tl-s">
+          <span class="prog-pill pp-blue">MathWOOT L2</span> after USAMO qualification. <span class="prog-pill pp-teal">OTIS Z-level</span> for the deepest problem practice. If MOP-invited, MathWOOT is free. This combination — MathWOOT for structure, OTIS for depth — is what many top US olympiad students run simultaneously.
+        </div>
+      </div>
+
+      <div class="tl-y">2030–33<br><span style="font-size:10px;color:var(--color-text-secondary)">Gr 10–12</span></div>
+      <div class="tl-c">
+        <div class="tl-t">MathWOOT L2 (repeat cycle) + OTIS Z + IMO preparation</div>
+        <div class="tl-s">MathWOOT L2 can be taken for two consecutive years with different material. OTIS Z-level continues as the primary deep problem source. AwesomeMath Level 4 (olympiad) in summers as available. If MOP-qualified, MathWOOT is free each year.</div>
+      </div>
+    </div>
+
+    <div class="insight" style="margin-top:14px"><strong>The sequencing principle:</strong> USAMTS → OTIS B → AwesomeMath L1–2 → MathWOOT L1 → OTIS D/Z + MathWOOT L2. Each program unlocks the next. Don't try to rush the entry — the AIME score gate on MathWOOT exists because the material genuinely assumes that ability level. Arriving at each program ready is far more valuable than arriving early and struggling.</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nbtn" onclick="sendPrompt('How should he prepare for the OTIS application specifically?')">OTIS application ↗</button>
+  <button class="nbtn" onclick="sendPrompt('How does USAMTS work and how should he approach it in grade 6?')">USAMTS guide ↗</button>
+  <button class="nbtn" onclick="sendPrompt('Can he do MathWOOT and OTIS at the same time without burning out?')">Workload check ↗</button>
+</div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
