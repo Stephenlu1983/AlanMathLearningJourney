@@ -1,0 +1,524 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.w { padding: 1.5rem 1rem; font-family: var(--font-sans, system-ui); color: var(--color-text-primary); max-width: 780px; margin: 0 auto; }
+
+.summary-strip { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 7px; margin-bottom: 1.25rem; }
+.ss { background: var(--color-background-secondary); border-radius: 8px; padding: 9px 11px; }
+.ss-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--color-text-secondary); margin-bottom: 2px; }
+.ss-val { font-size: 12px; font-weight: 500; color: var(--color-text-primary); line-height: 1.3; }
+.ss-sub { font-size: 11px; color: var(--color-text-secondary); margin-top: 1px; }
+.ss-green .ss-val { color: #085041; }
+@media (prefers-color-scheme: dark) { .ss-green .ss-val { color: #9FE1CB; } }
+
+.tabs { display: flex; gap: 5px; margin-bottom: 1rem; flex-wrap: wrap; }
+.tab { font-size: 12px; padding: 5px 11px; border-radius: 20px; border: 0.5px solid var(--color-border-secondary); cursor: pointer; background: var(--color-background-primary); color: var(--color-text-secondary); transition: all .12s; }
+.tab.active { border-color: #185FA5; background: #E6F1FB; color: #0C447C; font-weight: 500; }
+@media (prefers-color-scheme: dark) { .tab.active { background: #0C447C; color: #B5D4F4; border-color: #185FA5; } }
+.panel { display: none; }
+.panel.active { display: block; }
+
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+.slabel { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: .04em; color: var(--color-text-secondary); margin-bottom: 5px; }
+.sec { margin-bottom: 12px; }
+.sec:last-child { margin-bottom: 0; }
+
+.grade-block { margin-bottom: 1rem; }
+.grade-tag-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.gtag { display: inline-block; font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 12px; background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); color: var(--color-text-secondary); white-space: nowrap; }
+.gtag-now { background: #E6F1FB; color: #0C447C; border-color: #85B7EB; }
+.gtag-near { background: #E1F5EE; color: #085041; border-color: #5DCAA5; }
+@media (prefers-color-scheme: dark) { .gtag-now { background: #0C447C; color: #B5D4F4; border-color: #185FA5; } .gtag-near { background: #085041; color: #9FE1CB; border-color: #0F6E56; } }
+.grade-year { font-size: 11px; color: var(--color-text-secondary); }
+
+.mrow { display: flex; gap: 8px; align-items: flex-start; padding: 5px 0; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; }
+.mrow:last-child { border-bottom: none; }
+.mi { flex-shrink: 0; width: 20px; font-size: 12px; color: var(--color-text-secondary); padding-top: 1px; }
+.mt { color: var(--color-text-primary); line-height: 1.4; }
+.ms { color: var(--color-text-secondary); font-size: 12px; margin-top: 1px; line-height: 1.4; }
+
+.pills { display: flex; flex-wrap: wrap; gap: 4px; }
+.pill { font-size: 11px; padding: 2px 9px; border-radius: 10px; border: 0.5px solid; }
+.pm  { background:#E6F1FB; color:#0C447C; border-color:#85B7EB; }
+.pc  { background:#EEEDFE; color:#3C3489; border-color:#AFA9EC; }
+.pcs { background:#E1F5EE; color:#085041; border-color:#5DCAA5; }
+.ps  { background:#FAEEDA; color:#633806; border-color:#EF9F27; }
+.pw  { background:#FAECE7; color:#712B13; border-color:#F0997B; }
+.pg  { background: var(--color-background-secondary); color: var(--color-text-secondary); border-color: var(--color-border-secondary); }
+@media (prefers-color-scheme: dark) {
+  .pm  { background:#0C447C; color:#B5D4F4; border-color:#185FA5; }
+  .pc  { background:#3C3489; color:#CECBF6; border-color:#534AB7; }
+  .pcs { background:#085041; color:#9FE1CB; border-color:#0F6E56; }
+  .ps  { background:#633806; color:#FAC775; border-color:#854F0B; }
+  .pw  { background:#712B13; color:#F5C4B3; border-color:#D85A30; }
+}
+
+.prog-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 2px 8px; border-radius: 10px; border: 0.5px solid; font-weight: 500; white-space: nowrap; }
+.pt-woot  { background:#E6F1FB; color:#0C447C; border-color:#378ADD; }
+.pt-otis  { background:#E1F5EE; color:#085041; border-color:#1D9E75; }
+.pt-am    { background:#FAEEDA; color:#633806; border-color:#BA7517; }
+.pt-usamts { background:#EEEDFE; color:#3C3489; border-color:#7F77DD; }
+@media (prefers-color-scheme: dark) {
+  .pt-woot  { background:#0C447C; color:#B5D4F4; border-color:#378ADD; }
+  .pt-otis  { background:#085041; color:#9FE1CB; border-color:#1D9E75; }
+  .pt-am    { background:#633806; color:#FAC775; border-color:#BA7517; }
+  .pt-usamts { background:#3C3489; color:#CECBF6; border-color:#7F77DD; }
+}
+
+.note { padding: 9px 13px; border-radius: 0 8px 8px 0; background: var(--color-background-secondary); font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; margin-top: 9px; }
+.note.blue  { border-left: 2px solid #378ADD; }
+.note.green { border-left: 2px solid #1D9E75; }
+.note.amber { border-left: 2px solid #BA7517; }
+.note.red   { border-left: 2px solid #D85A30; }
+.note strong { color: var(--color-text-primary); font-weight: 500; }
+
+.tl { display: grid; grid-template-columns: 112px 1fr; }
+.tl-y { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); padding: 10px 8px 0 0; line-height: 1.3; }
+.tl-c { border-left: 1.5px solid var(--color-border-secondary); padding: 8px 0 10px 16px; margin-left: 4px; }
+.tl-t { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; line-height: 1.3; }
+.tl-s { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: middle; flex-shrink: 0; }
+
+.load-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lc { background: var(--color-background-secondary); border-radius: 8px; padding: 10px 12px; }
+.lc-title { font-size: 12px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.lc-body { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.lc-hours { font-size: 11px; color: var(--color-text-secondary); margin-top: 5px; padding-top: 5px; border-top: 0.5px solid var(--color-border-tertiary); }
+
+.bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 11px; }
+.bar-label { width: 110px; color: var(--color-text-secondary); flex-shrink: 0; }
+.bar-track { flex: 1; height: 8px; background: var(--color-background-secondary); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; }
+.bar-val { width: 40px; text-align: right; color: var(--color-text-secondary); flex-shrink: 0; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; font-size: 11px; color: var(--color-text-secondary); }
+.ldot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 3px; vertical-align: middle; }
+
+.nbtn { font-size: 13px; padding: 6px 14px; border-radius: 8px; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); cursor: pointer; }
+.nbtn:hover { background: var(--color-background-secondary); }
+.nav { display: flex; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+</style>
+
+<div class="w">
+
+<div class="summary-strip">
+  <div class="ss"><div class="ss-label">Status</div><div class="ss-val">Grade 5</div><div class="ss-sub">Int. Algebra → Jul 2026</div></div>
+  <div class="ss ss-green"><div class="ss-label">AMC 8 ability</div><div class="ss-val">~24 / 25</div><div class="ss-sub">DHR · top 1% · gr 5</div></div>
+  <div class="ss"><div class="ss-label">Primary gap</div><div class="ss-val">Pacing only</div><div class="ss-sub">Not depth</div></div>
+  <div class="ss"><div class="ss-label">AMC 10</div><div class="ss-val">Nov 2026</div><div class="ss-sub">Grade 6 debut</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="show('gr5')">Gr 5 (now)</button>
+  <button class="tab" onclick="show('gr6')">Gr 6</button>
+  <button class="tab" onclick="show('gr7')">Gr 7</button>
+  <button class="tab" onclick="show('gr8')">Gr 8</button>
+  <button class="tab" onclick="show('gr910')">Gr 9–10</button>
+  <button class="tab" onclick="show('gr1112')">Gr 11–12</button>
+  <button class="tab" onclick="show('tl')">Full timeline</button>
+  <button class="tab" onclick="show('load')">Workload</button>
+</div>
+
+<!-- GRADE 5 -->
+<div class="panel active" id="p-gr5">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag gtag-now">Grade 5 · now → July 2026</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">Math — primary focus</div>
+        <div class="mrow"><span class="mi">→</span><div><div class="mt">Complete AoPS Intermediate Algebra — all chapters including challenge problems</div><div class="ms">Don't rush. Every chapter completed well compounds for years on AMC 10 algebra problems.</div></div></div>
+        <div class="mrow"><span class="mi">→</span><div><div class="mt"><em>How to Prove It</em> (Velleman) — 20 min daily habit, start now</div><div class="ms">6+ months of daily proof habit before grade 6 begins. This is the single highest-leverage parallel activity.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Pacing fix — the only competition intervention needed</div>
+        <div class="mrow"><span class="mi">1</span><div><div class="mt">Weekly timed AMC 8 past papers (2019–2025) with four deliberate checking habits</div><div class="ms">Read question twice · write all arithmetic · sanity-check answer · reserve 5 min to recheck. These habits alone close the 21→24 execution gap. Expect consistent 23–25 within 4–6 weeks.</div></div></div>
+        <div class="mrow"><span class="mi">2</span><div><div class="mt">Categorize every error: math gap vs. execution error</div><div class="ms">Execution errors should decline each week. He's already solving Q21–25 correctly — just not reliably under pressure.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Structured programs — none yet</div>
+        <div class="mrow"><span class="mi">→</span><div><div class="mt"><span class="prog-tag pt-otis">OTIS Excerpts</span> — browse lightly as a preview of olympiad flavor</div><div class="ms">Free PDF (202 problems). Read a chapter occasionally for curiosity, not systematic study.</div></div></div>
+        <div class="mrow"><span class="mi">✗</span><div><div class="mt">MathWOOT, OTIS, AwesomeMath — not yet appropriate</div><div class="ms">All three require mathematical maturity he will have in 1–2 years. Entering early means spinning wheels at the wrong level.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Light parallel tracks</div>
+        <div class="pills"><span class="pill pcs">Python — Project Euler 1–20</span><span class="pill pg">AMC 10 past papers untimed, for curiosity</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADE 6 -->
+<div class="panel" id="p-gr6">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag gtag-near">Grade 6 · 2026–27</span><span class="grade-year">Aug 2026 – Jun 2027</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">Math curriculum — starts immediately after Int. Algebra</div>
+        <div class="pills"><span class="pill pm">AoPS Precalculus (3×/week)</span><span class="pill pm">Int. Counting & Probability (2×/week)</span><span class="pill pm">AMC 10 Problem Series</span><span class="pill pc">How to Prove It — continue daily</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Competition milestones</div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">AMC 10 — November 2026 · floor 85–100, stretch 100–115 (AIME zone)</div><div class="ms">Grade 6 debut — primarily a baseline and competition-immunity experience. Pacing habits remain the focus through November.</div></div></div>
+        <div class="mrow"><span class="mi">🏆</span><div><div class="mt">MATHCOUNTS school & chapter</div><div class="ms">Builds speed and fluency that directly reinforces AMC pacing discipline.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Structured programs — grade 6</div>
+        <div class="mrow"><span class="mi">✓</span><div>
+          <div class="mt"><span class="prog-tag pt-usamts">USAMTS</span> — start Round 1 (fall 2026)</div>
+          <div class="ms">Free, individual, proof-based competition. Month-long rounds with real written feedback on solutions. This is the essential prerequisite for OTIS — it builds exactly the proof-writing ability needed to apply. Complete at least Rounds 1–3 this year. More important than any paid program at this stage.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">~</span><div>
+          <div class="mt"><span class="prog-tag pt-am">AwesomeMath Academy</span> — optional supplement (year-round, 5th grade+)</div>
+          <div class="ms">$595 per 12-week course. Weekend live sessions. Can layer one course (e.g. Combinatorics) alongside self-study without overload. Not essential — AoPS books are sufficient. Skip if schedule feels full after AMC 10.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✗</span><div><div class="mt">OTIS, MathWOOT — not yet</div><div class="ms">OTIS requires proof fluency developed through USAMTS first. MathWOOT requires AIME 5+, which comes in Feb 2028.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">CS track</div>
+        <div class="pills"><span class="pill pcs">Python — Project Euler 1–30</span><span class="pill pcs">Functions, recursion, basic data structures</span></div>
+      </div>
+      <div class="note blue"><strong>The USAMTS is the linchpin for this year.</strong> Evan Chen explicitly recommends it as the best entry point for proof-based competition work. Its feedback model is unique — you get actual written comments on your proofs, not just a score. This is the experience that makes OTIS applications credible.</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADE 7 -->
+<div class="panel" id="p-gr7">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 7 · 2027–28</span><span class="grade-year">Aug 2027 – Jun 2028</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">Math curriculum</div>
+        <div class="pills"><span class="pill pm">AoPS Int. Number Theory</span><span class="pill pm">AoPS Calculus (proof-based)</span><span class="pill pm">Olympiad Geometry — EGMO (Evan Chen)</span><span class="pill pm">AIME Problem Series</span><span class="pill pc">Zeitz — Art & Craft of Problem Solving</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Competition milestones</div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">AMC 10 November 2027 — target <strong>120+</strong> · AIME qualification expected</div></div></div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">AIME February 2028 — target <strong>5–8</strong> · this score unlocks MathWOOT</div><div class="ms">Score 5+ → eligible for MathWOOT Level 1 starting September 2028. This is the key gate to plan around.</div></div></div>
+        <div class="mrow"><span class="mi">🏆</span><div><div class="mt">MATHCOUNTS state / national · USAMTS continued (Rounds 1–5)</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Structured programs — grade 7</div>
+        <div class="mrow"><span class="mi">✓</span><div>
+          <div class="mt"><span class="prog-tag pt-otis">OTIS — B-level track</span> · apply spring 2027 for 2027–28 year</div>
+          <div class="ms">After USAMTS proof experience, he should be ready. B-level is the entry track — beginner-friendly olympiad handouts with mentor feedback. Apply at apply.evanchen.cc. Admission is not score-gated — it's about proof readiness and English ability. Financial aid available if needed.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">~</span><div>
+          <div class="mt"><span class="prog-tag pt-am">AwesomeMath Summer</span> — attempt if age ≥ 12 in June 2027</div>
+          <div class="ms">He'll be ~11–12. If 12 by June: apply for Level 1 in Combinatorics + Algebra (3 weeks, online). If still 11, wait for Summer 2028 — no rush. Level 1 = AMC 10/12 midrange through AIME 1–3.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✗</span><div><div class="mt">MathWOOT — not yet (awaiting AIME score from Feb 2028)</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">CS</div>
+        <div class="pills"><span class="pill pcs">USACO Bronze attempt</span><span class="pill pcs">USACO Guide (usaco.guide)</span></div>
+      </div>
+      <div class="note green"><strong>OTIS B-level + USAMTS + self-study:</strong> This combination is the right load for grade 7 — challenging but not crushing. OTIS is self-paced so it flexes around competition prep. USAMTS month-long rounds require only a few hours per round. Neither competes meaningfully with the AoPS curriculum.</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADE 8 -->
+<div class="panel" id="p-gr8">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 8 · 2028–29</span><span class="grade-year">Aug 2028 – Jun 2029</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">Math curriculum — university level begins</div>
+        <div class="pills"><span class="pill pm">AoPS Group Theory</span><span class="pill pm">Axler — Linear Algebra Done Right</span><span class="pill pm">Spivak — Calculus (bridge)</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Competition milestones</div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">AMC 10/12: <strong>130+</strong> · AIME: <strong>8–11</strong> · <strong>USAJMO qualification</strong></div><div class="ms">Index = AMC 10 + 20× AIME. e.g. 130 + 20×9 = 310 → well above typical USAJMO cutoff of ~230–250.</div></div></div>
+        <div class="mrow"><span class="mi">🏆</span><div><div class="mt">HMMT November · PUMaC · USAMTS</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Structured programs — the core year</div>
+        <div class="mrow"><span class="mi">★</span><div>
+          <div class="mt"><span class="prog-tag pt-woot">MathWOOT Level 1</span> · September 2028 · $895</div>
+          <div class="ms">The most important structured enrollment on the entire roadmap. Prerequisite unlocked by AIME 5+ in Feb 2028. 22 classes Sept–March, 2 hrs each, 3 time slot options/week. Proof-writing instruction, all four olympiad subjects, direct solution feedback. Run by Alex Song (5× IMO Gold) and David Patrick (USAMO winner). 76 IMO medals since 2015.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✓</span><div>
+          <div class="mt"><span class="prog-tag pt-otis">OTIS — D-level track</span> · upgrade from B-level</div>
+          <div class="ms">MathWOOT provides structured class instruction. OTIS provides deep, curated problem practice between sessions. They are complementary, not competing — MathWOOT is ~4 hrs/week, OTIS is self-paced. The combination is standard for serious USAMO candidates. D-level = mid-range olympiad, targeting USAJMO qualification.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✓</span><div>
+          <div class="mt"><span class="prog-tag pt-am">AwesomeMath Level 2</span> · Summer 2028 (before grade 8 starts)</div>
+          <div class="ms">AIME 4–11 level. He'll be 12–13, solidly in range. Take 2 courses across different subjects — e.g., Number Theory L2 + Geometry L2, or Combinatorics L3 if ICP work is strong. 3 weeks online, 2.5 hrs/day. Excellent subject-specific depth before MathWOOT begins in September.</div>
+        </div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Summer programs (residential)</div>
+        <div class="pills"><span class="pill ps">PROMYS — BU, 6 weeks</span><span class="pill ps">Ross Mathematics — Ohio State, 8 weeks</span><span class="pill ps">Canada/USA Mathcamp</span></div>
+        <div class="ms" style="margin-top:5px;font-size:12px;color:var(--color-text-secondary);">AwesomeMath (online) can coexist with a residential program if sessions don't overlap. Pick one residential + one AwesomeMath session — don't stack all three.</div>
+      </div>
+      <div class="sec">
+        <div class="slabel">CS</div>
+        <div class="pills"><span class="pill pcs">C++ — USACO Silver target</span><span class="pill pcs">AP Computer Science A</span><span class="pill pcs">Git / Linux</span></div>
+      </div>
+      <div class="note blue"><strong>MathWOOT L1 + OTIS D-level together:</strong> Combined load is approximately 6–8 hours/week on top of self-study. This is manageable at grade 8 for a motivated student — roughly equivalent to a serious music student's practice schedule. The key is that OTIS is self-paced, so it expands and contracts around MathWOOT's fixed schedule and competition season peaks.</div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADES 9–10 -->
+<div class="panel" id="p-gr910">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 9 · 2029–30</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">University math</div>
+        <div class="pills"><span class="pill pm">Real Analysis I (Abbott or Rudin)</span><span class="pill pm">Proof-based Linear Algebra (Axler)</span><span class="pill pm">Multivariable Calculus</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Competition milestones</div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">AMC 12: <strong>115–130</strong> · AIME: <strong>10–13</strong> · <strong>USAMO qualification</strong> · solve 1–2 USAMO problems</div></div></div>
+        <div class="mrow"><span class="mi">🏆</span><div><div class="mt">HMMT February · ARML · USAMTS</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Structured programs — grade 9</div>
+        <div class="mrow"><span class="mi">★</span><div>
+          <div class="mt"><span class="prog-tag pt-woot">MathWOOT Level 2</span> · September 2029</div>
+          <div class="ms">After USAMO qualification. Alternates content biennially — can be taken for two consecutive years without repeating material. If MOP-invited: <strong>MathWOOT is free</strong> (MOP participants get complimentary enrollment).</div>
+        </div></div>
+        <div class="mrow"><span class="mi">★</span><div>
+          <div class="mt"><span class="prog-tag pt-otis">OTIS — D or Z-level</span> · upgrade based on USAMO performance</div>
+          <div class="ms">Z-level is Evan Chen's hardest track — MOP-level students targeting IMO. Upgrade from D to Z after first USAMO. MathWOOT L2 + OTIS Z is the standard configuration for serious US IMO candidates.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✓</span><div>
+          <div class="mt"><span class="prog-tag pt-am">AwesomeMath Level 3</span> · Summer 2029</div>
+          <div class="ms">AIME 12+ / pre-olympiad. Can run alongside PROMYS or Ross if sessions don't conflict (AwesomeMath is online). USA(J)MO qualifiers are auto-admitted — no test required.</div>
+        </div></div>
+        <div class="mrow"><span class="mi">✓</span><div><div class="mt">MIT PRIMES — apply fall of grade 8 · RSI — apply spring of grade 9</div><div class="ms">Year-long research mentorship. These are the bridge from competition math to actual mathematical research — the most important profile-building programs for PhD admissions.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">CS ramp</div>
+        <div class="pills"><span class="pill pcs">USACO Gold target</span><span class="pill pcs">ML from scratch — NumPy</span><span class="pill pcs">AP Physics C</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 10 · 2030–31</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">University math</div>
+        <div class="pills"><span class="pill pm">Abstract Algebra I (Artin)</span><span class="pill pm">Multivariable / Vector Analysis</span><span class="pill pm">Intro Topology</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Competition + programs</div>
+        <div class="mrow"><span class="mi">🎯</span><div><div class="mt">MOP invitation — top ~60 nationally · 2–3 USAMO problems (score 14–21/42)</div></div></div>
+        <div class="mrow"><span class="mi">★</span><div><div class="mt"><span class="prog-tag pt-woot">MathWOOT L2 (year 2)</span> + <span class="prog-tag pt-otis">OTIS Z-level</span> · same combination, deeper material</div></div></div>
+        <div class="mrow"><span class="mi">✓</span><div><div class="mt"><span class="prog-tag pt-am">AwesomeMath Level 4</span> (olympiad) · Summer 2030 · auto-admitted as USA(J)MO qualifier</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">ML / Physics opens</div>
+        <div class="pills"><span class="pill pcs">PyTorch basics</span><span class="pill pcs">Statistical mechanics intro</span><span class="pill pcs">USACO Platinum (aspirational)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRADES 11–12 -->
+<div class="panel" id="p-gr1112">
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 11 · 2031–32</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">University math (graduate-track)</div>
+        <div class="pills"><span class="pill pm">Real Analysis II (measure theory)</span><span class="pill pm">Abstract Algebra II (Galois)</span><span class="pill pm">Complex Analysis</span><span class="pill pm">ODEs</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Programs — IMO peak year</div>
+        <div class="mrow"><span class="mi">★</span><div><div class="mt"><span class="prog-tag pt-woot">MathWOOT L2</span> + <span class="prog-tag pt-otis">OTIS Z</span> · IMO Team Selection Tests at MOP</div><div class="ms">If MOP-qualified: MathWOOT is free. This combination continues as the core structured preparation through IMO selection.</div></div></div>
+        <div class="mrow"><span class="mi">★</span><div><div class="mt">MIT PRIMES or RSI research — publishable paper target</div><div class="ms">PhD admissions committees weight research experience and recommendation letters far more than competition medals. This is now the most important parallel track.</div></div></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">ML — serious engagement</div>
+        <div class="pills"><span class="pill pcs">Simon Prince — Understanding Deep Learning</span><span class="pill pcs">Karpathy — Neural Networks: Zero to Hero</span><span class="pill pcs">Implement research papers · Kaggle</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="grade-block">
+    <div class="grade-tag-row"><span class="gtag">Grade 12 · 2032–33</span></div>
+    <div class="card">
+      <div class="sec">
+        <div class="slabel">University math + research + college</div>
+        <div class="pills"><span class="pill pm">Topology (Munkres)</span><span class="pill pm">Measure-theoretic Probability</span><span class="pill pm">Convex Optimization (Boyd)</span><span class="pill pm">PDEs</span></div>
+      </div>
+      <div class="sec">
+        <div class="slabel">Profile</div>
+        <div class="mrow"><span class="mi">📄</span><div><div class="mt">Publishable research project — the single most important credential for MIT / Stanford / CMU</div></div></div>
+        <div class="mrow"><span class="mi">✍️</span><div><div class="mt">Math or CS blog — communication skills matter enormously for research careers</div></div></div>
+        <div class="mrow"><span class="mi">🏫</span><div><div class="mt">Target: MIT · Stanford · CMU · Princeton · Caltech · Berkeley</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FULL TIMELINE -->
+<div class="panel" id="p-tl">
+  <div class="card">
+    <div class="slabel" style="margin-bottom:12px">Complete milestone + program timeline</div>
+    <div class="tl">
+      <div class="tl-y">Now – Jul '26<br><small>Grade 5</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#378ADD"></span>Finish Int. Algebra · fix pacing</div>
+        <div class="tl-s">Int. Algebra complete · <em>How to Prove It</em> daily · weekly timed AMC 8 papers · <span class="prog-tag pt-otis" style="font-size:10px">OTIS Excerpts</span> (browse) · Python Project Euler</div>
+      </div>
+
+      <div class="tl-y">Aug '26<br><small>Summer</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#1D9E75"></span>Precalculus + ICP begin</div>
+        <div class="tl-s">AoPS Precalc + ICP in parallel · First AMC 10 past paper untimed · Optional: <span class="prog-tag pt-am" style="font-size:10px">AwesomeMath Academy</span> (1 course)</div>
+      </div>
+
+      <div class="tl-y">Nov '26<br><small>Grade 6</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#1D9E75"></span>AMC 10 debut · USAMTS begins</div>
+        <div class="tl-s">AMC 10 floor 85–100, stretch 100–115 · <span class="prog-tag pt-usamts" style="font-size:10px">USAMTS Round 1</span> starts · MATHCOUNTS school & chapter</div>
+      </div>
+
+      <div class="tl-y">Spring '27<br><small>Grade 6</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#1D9E75"></span>Apply to OTIS</div>
+        <div class="tl-s"><span class="prog-tag pt-usamts" style="font-size:10px">USAMTS</span> Rounds 2–5 complete · Apply <span class="prog-tag pt-otis" style="font-size:10px">OTIS B-level</span> at apply.evanchen.cc · late apps until end of April</div>
+      </div>
+
+      <div class="tl-y">Summer '27<br><small>Before Gr 7</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#7F77DD"></span>AwesomeMath (if age ≥ 12)</div>
+        <div class="tl-s"><span class="prog-tag pt-am" style="font-size:10px">AwesomeMath Level 1</span> — Algebra + Combinatorics (if 12 by June) · if 11, wait for Summer 2028</div>
+      </div>
+
+      <div class="tl-y">Fall '27<br><small>Grade 7</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#7F77DD"></span>OTIS B-level · Int. Number Theory · AoPS Calculus</div>
+        <div class="tl-s"><span class="prog-tag pt-otis" style="font-size:10px">OTIS B-level</span> runs year-round alongside curriculum · USAMTS continued · USACO Bronze</div>
+      </div>
+
+      <div class="tl-y">Nov '27<br><small>Grade 7</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#7F77DD"></span>AMC 10 — AIME qualification expected</div>
+        <div class="tl-s">Target 120+ · AIME invitation · MATHCOUNTS state / national</div>
+      </div>
+
+      <div class="tl-y">Feb '28<br><small>Grade 7</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#7F77DD"></span>First AIME — unlocks MathWOOT</div>
+        <div class="tl-s">Target 5–8 · Score 5+ → MathWOOT Level 1 eligible from Sept 2028</div>
+      </div>
+
+      <div class="tl-y">Summer '28<br><small>Before Gr 8</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#BA7517"></span>AwesomeMath Level 2 + residential program</div>
+        <div class="tl-s"><span class="prog-tag pt-am" style="font-size:10px">AwesomeMath L2</span> (2 subject courses, online) + PROMYS or Ross or Mathcamp (residential) · don't stack both residential + AwesomeMath if they conflict</div>
+      </div>
+
+      <div class="tl-y">Sept '28<br><small>Grade 8</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#BA7517"></span>MathWOOT L1 begins — the core program</div>
+        <div class="tl-s"><span class="prog-tag pt-woot" style="font-size:10px">MathWOOT L1</span> Sept 2028 – Mar 2029 · <span class="prog-tag pt-otis" style="font-size:10px">OTIS D-level</span> alongside · Group Theory + Linear Algebra curriculum · USAJMO qualification target</div>
+      </div>
+
+      <div class="tl-y">Summer '29<br><small>Before Gr 9</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#D85A30"></span>AwesomeMath Level 3 + RSI application</div>
+        <div class="tl-s"><span class="prog-tag pt-am" style="font-size:10px">AwesomeMath L3</span> (AIME 12+ / Olympiad) · Auto-admitted as USA(J)MO qualifier · Apply RSI · MIT PRIMES application (fall of grade 8)</div>
+      </div>
+
+      <div class="tl-y">Sept '29<br><small>Grade 9</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#D85A30"></span>MathWOOT L2 + OTIS D/Z + USAMO push</div>
+        <div class="tl-s"><span class="prog-tag pt-woot" style="font-size:10px">MathWOOT L2</span> + <span class="prog-tag pt-otis" style="font-size:10px">OTIS Z-level</span> (if MOP-qualified: MathWOOT free) · USAMO qualification · Real Analysis I · ML from scratch</div>
+      </div>
+
+      <div class="tl-y">2030–31<br><small>Grade 10</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#D85A30"></span>MOP invitation · MathWOOT L2 yr 2 · OTIS Z</div>
+        <div class="tl-s">Abstract Algebra · <span class="prog-tag pt-am" style="font-size:10px">AwesomeMath L4</span> (Olympiad, summer) · PyTorch · AP Physics C</div>
+      </div>
+
+      <div class="tl-y">2031–33<br><small>Gr 11–12</small></div>
+      <div class="tl-c">
+        <div class="tl-t"><span class="dot" style="background:#D85A30"></span>IMO peak · research · college</div>
+        <div class="tl-s"><span class="prog-tag pt-woot" style="font-size:10px">MathWOOT L2</span> (free if MOP) + <span class="prog-tag pt-otis" style="font-size:10px">OTIS Z</span> · IMO Team Selection · MIT PRIMES / RSI publishable paper · MIT / Stanford / CMU</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WORKLOAD -->
+<div class="panel" id="p-load">
+  <div class="card">
+    <div class="sec">
+      <div class="slabel">Weekly hours by grade — programs included</div>
+
+      <div class="bar-row"><span class="bar-label">Grade 5 (now)</span><div class="bar-track"><div class="bar-fill" style="width:55%;background:#378ADD"></div></div><span class="bar-val">~11 hrs</span></div>
+      <div class="bar-row"><span class="bar-label">Grade 6</span><div class="bar-track"><div class="bar-fill" style="width:65%;background:#378ADD"></div></div><span class="bar-val">~13 hrs</span></div>
+      <div class="bar-row"><span class="bar-label">Grade 7 (+OTIS)</span><div class="bar-track"><div class="bar-fill" style="width:72%;background:#7F77DD"></div></div><span class="bar-val">~14 hrs</span></div>
+      <div class="bar-row"><span class="bar-label">Grade 8 (+WOOT)</span><div class="bar-track"><div class="bar-fill" style="width:82%;background:#BA7517"></div></div><span class="bar-val">~16 hrs</span></div>
+      <div class="bar-row"><span class="bar-label">Grade 9 (+WOOT L2)</span><div class="bar-track"><div class="bar-fill" style="width:90%;background:#D85A30"></div></div><span class="bar-val">~18 hrs</span></div>
+      <div class="bar-row"><span class="bar-label">Grades 10–12</span><div class="bar-track"><div class="bar-fill" style="width:95%;background:#D85A30"></div></div><span class="bar-val">~19 hrs</span></div>
+      <div class="legend">
+        <span><span class="ldot" style="background:#378ADD"></span>Self-study + competitions</span>
+        <span><span class="ldot" style="background:#7F77DD"></span>OTIS added</span>
+        <span><span class="ldot" style="background:#BA7517"></span>MathWOOT L1 added</span>
+        <span><span class="ldot" style="background:#D85A30"></span>MathWOOT L2 + peak load</span>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Grade 8 breakdown — the first fully loaded year</div>
+      <div class="load-grid">
+        <div class="lc">
+          <div class="lc-title">AoPS curriculum + proof books</div>
+          <div class="lc-body">Group Theory, Linear Algebra (Axler), Spivak. Chapter-by-chapter, 5 days/week.</div>
+          <div class="lc-hours">~6 hrs/week</div>
+        </div>
+        <div class="lc">
+          <div class="lc-title">MathWOOT Level 1</div>
+          <div class="lc-body">22 classes, 2 hrs each. Plus homework + solution review between sessions.</div>
+          <div class="lc-hours">~4 hrs/week (averaged over Sept–Mar)</div>
+        </div>
+        <div class="lc">
+          <div class="lc-title">OTIS D-level</div>
+          <div class="lc-body">Self-paced handouts. Expands/contracts around competition peaks. No fixed class schedule.</div>
+          <div class="lc-hours">~2–3 hrs/week (flexible)</div>
+        </div>
+        <div class="lc">
+          <div class="lc-title">Competition prep + CS</div>
+          <div class="lc-body">AMC/AIME timed papers, USAMTS rounds, USACO Bronze/Silver, HMMT prep.</div>
+          <div class="lc-hours">~3–4 hrs/week</div>
+        </div>
+      </div>
+      <div class="lc-hours" style="margin-top:8px;padding-top:8px;border-top:0.5px solid var(--color-border-tertiary);font-size:12px;color:var(--color-text-secondary);">Total: ~15–17 hrs/week. Comparable to a serious music student's practice + lesson schedule. Weekends remain protected for rest.</div>
+    </div>
+
+    <div class="sec">
+      <div class="slabel">Can MathWOOT and OTIS run simultaneously? Yes — here's why</div>
+      <div class="mrow"><span class="mi">✓</span><div><div class="mt">They solve different problems</div><div class="ms">MathWOOT: structured instruction with a cohort, fixed schedule, exam simulations, direct feedback on specific solutions. OTIS: self-paced problem sets, individual pace, Evan Chen's curated handouts. One is the class; the other is the practice.</div></div></div>
+      <div class="mrow"><span class="mi">✓</span><div><div class="mt">OTIS is genuinely self-paced — it flexes around MathWOOT's schedule</div><div class="ms">During MathWOOT exam weeks and AIME/USAMO season: reduce OTIS to near zero. During quieter stretches: ramp OTIS back up. This is exactly how top students manage both.</div></div></div>
+      <div class="mrow"><span class="mi">✓</span><div><div class="mt">Many of the top US olympiad students run both simultaneously in grades 8–11</div><div class="ms">This is the standard configuration among USAMO/MOP-level students — it's not unusual or exceptional.</div></div></div>
+      <div class="mrow"><span class="mi">→</span><div><div class="mt">The burnout risk is not the programs themselves — it's over-scheduling everything at once</div><div class="ms">AwesomeMath Summer is intensive (2.5 hrs/day for 3 weeks) but contained. It doesn't run during the school year. The yearly rhythm: school year = MathWOOT + OTIS; summer = AwesomeMath + residential program. No overlap.</div></div></div>
+    </div>
+
+    <div class="note red"><strong>The one guard against burnout at every stage:</strong> weekends fully free, one non-math interest protected (music, sport, anything), and the student retains genuine ownership of his trajectory — he chooses what he works on each day within the structure, not a parent-imposed hourly schedule. The huaren.us community and competition math coaches are unanimous: the students who sustain this intensity for 6+ years are the ones who feel math is something they do, not something done to them.</div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nbtn" onclick="sendPrompt('When exactly should we apply to OTIS and what does the application require?')">OTIS application ↗</button>
+  <button class="nbtn" onclick="sendPrompt('How should he approach USAMTS in grade 6 to build proof skills?')">USAMTS guide ↗</button>
+  <button class="nbtn" onclick="sendPrompt('What should he do in the weeks immediately after finishing the AMC 10 in November 2026?')">Post-AMC 10 plan ↗</button>
+</div>
+
+</div>
+<script>
+function show(id) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('p-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
